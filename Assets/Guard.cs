@@ -17,14 +17,6 @@ public class Guard : MonoBehaviour
     Color spotlightColor;
 
     void OnDrawGizmos() {
-        Vector3 startPosition = pathHolder.GetChild(0).position;
-        Vector3 prevPosition = startPosition;
-        foreach (Transform waypoint in pathHolder) {
-            Gizmos.DrawLine(prevPosition, waypoint.position);
-            prevPosition = waypoint.position;
-            Gizmos.DrawSphere(waypoint.position, .3f);
-        }
-        Gizmos.DrawLine(prevPosition, startPosition);
         Gizmos.color = Color.red;
         Gizmos.DrawRay(transform.position, transform.forward * viewDistance);
     }
