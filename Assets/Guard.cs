@@ -8,6 +8,12 @@ public class Guard : MonoBehaviour
     public float speed;
     public float waitTime;
     public float turnSpeed;
+    public Light spotlight;
+    public float viewDistance;
+    public LayerMask viewMask;
+    float viewAngle;
+    Transform player;
+    Color spotlightColor;
 
     void OnDrawGizmos() {
         Vector3 startPosition = pathHolder.GetChild(0).position;
@@ -18,10 +24,15 @@ public class Guard : MonoBehaviour
             Gizmos.DrawSphere(waypoint.position, .3f);
         }
         Gizmos.DrawLine(prevPosition, startPosition);
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, transform.forward * viewDistance);
     }
     // Start is called before the first frame update
     void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        viewAngle = spotlight.spotAngle;
+        spotlightColor = spotlight.color;
         Vector3[] waypoints = new Vector3[pathHolder.childCount];
         for (int i = 0; i < pathHolder.childCount; i++) {
             waypoints[i] = pathHolder.GetChild(i).position;
@@ -33,7 +44,22 @@ public class Guard : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (CanSeePlayer()) {
+            spotlight.color = Color.red;
+        } else {
+            spotlight.color = spotlightColor;
+        }
+    }
+
+    bool CanSeePlayer() {
+        if (Vector3.Distance(transform.position, player.position) > viewDistance) return false;
         
+        Vector3 directionToPlayer = (player.position - transform.position).normalized;
+        float playerAngle = Vector3.Angle(transform.forward, directionToPlayer);
+        if (playerAngle > viewAngle / 2f) return false;
+
+        if (Physics.Linecast(transform.position, player.position, viewMask)) return false;
+        return true;
     }
 
     IEnumerator FollowPath(Vector3[] waypoints) {
