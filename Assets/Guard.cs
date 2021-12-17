@@ -8,9 +8,10 @@ public class Guard : MonoBehaviour
     public float speed;
     public float waitTime;
     public float turnSpeed;
-    public Light spotlight;
     public float viewDistance;
     public LayerMask viewMask;
+
+    Light spotlight;
     float viewAngle;
     Transform player;
     Color spotlightColor;
@@ -30,6 +31,7 @@ public class Guard : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        spotlight = transform.GetChild(0).gameObject.GetComponent<Light>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         viewAngle = spotlight.spotAngle;
         spotlightColor = spotlight.color;
