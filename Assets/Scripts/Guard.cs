@@ -10,11 +10,14 @@ public class Guard : MonoBehaviour
     public float turnSpeed;
     public float viewDistance;
     public LayerMask viewMask;
+    public float timeTillAlert;
 
     Light spotlight;
     float viewAngle;
     Transform player;
     Color spotlightColor;
+    bool hasSeenPlayer;
+    float timeSeen;
 
     void OnDrawGizmos() {
         Gizmos.color = Color.red;
@@ -38,9 +41,14 @@ public class Guard : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (CanSeePlayer()) {
-            spotlight.color = Color.red;
+        bool canSeePlayer = CanSeePlayer();
+        if (canSeePlayer && hasSeenPlayer) {
+            spotlight.color = Color.Lerp(spotlightColor, Color.red, (Time.time - timeSeen) / timeTillAlert);
+        } else if (canSeePlayer) {
+            hasSeenPlayer = true;
+            timeSeen = Time.time;
         } else {
+            hasSeenPlayer = false;
             spotlight.color = spotlightColor;
         }
     }
