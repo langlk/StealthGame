@@ -11,6 +11,7 @@ public class Guard : MonoBehaviour
     public float viewDistance;
     public LayerMask viewMask;
     public float timeTillAlert;
+    public static event System.Action OnGuardAlerted;
 
     Light spotlight;
     float viewAngle;
@@ -44,6 +45,9 @@ public class Guard : MonoBehaviour
         bool canSeePlayer = CanSeePlayer();
         if (canSeePlayer && hasSeenPlayer) {
             spotlight.color = Color.Lerp(spotlightColor, Color.red, (Time.time - timeSeen) / timeTillAlert);
+            if (Time.time >= timeSeen + timeTillAlert && OnGuardAlerted != null) {
+                OnGuardAlerted();
+            } 
         } else if (canSeePlayer) {
             hasSeenPlayer = true;
             timeSeen = Time.time;
